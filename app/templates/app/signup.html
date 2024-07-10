@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+Sign up page
+{% endblock title %}
+
+{% block main %}
+<form method="post">
+    {% csrf_token %}
+
+    <label for="">Username</label><br>
+    <input type="text" name="username"><br>
+    <label for="">Email:</label><br>
+    <input type="email" name="email"> <br>
+    <label>Password:</label><br>
+    <input type="password" name="password" id=""><br>
+    <label for="">Confirm Password</label><br>
+    <input type="password" name="cpassword" id=""><br>
+    <button>Register</button>
+
+</form>
+
+
+{% endblock main %}
