@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.models import auth
+from app.models import Product
 
 # Create your views here.
 User = get_user_model()
 
 def home(request):
-    context = {}
+    all_products = Product.objects.all().order_by("-created_at")
+    context = {'products': all_products}
     return render(request, "app/home.html", context)
 
 def signup(request):
@@ -89,3 +91,57 @@ def dashboard(request):
 def logout(request):
     auth.logout(request)
     return redirect(login)
+
+
+def create_product(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect(login)
+    
+    if request.method == "POST":
+        title = request.POST.get("title")
+        price = request.POST.get("price")
+        quantity = request.POST.get("quantity")
+        image = request.POST.get("image")
+        if not title or not price or not quantity or not image:
+            messages.error(request, "All fields are required")
+            return render(request, "app/new_product.html")
+        new_product = Product.objects.create(
+            title = title,
+            price = price,
+            quantity = quantity,
+            picture = image,
+            owner = user
+        )
+        new_product.save()
+        messages.success(request, "Created succesfully")
+        return redirect(dashboard)
+    return render(request, "app/new_product.html")
+
+
+def single_product(request, id):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect(login)
+    product = Product.objects.filter(id=id).first()
+    if not product:
+        messages.error(request, "No product with such ID")
+        return redirect(home)
+    if request.method == "POST":
+        quantity = request.POST.get("quantity")
+        if not quantity:
+            messages.error(request, "Quantity not provided")
+            return redirect(home)
+        quantity = int(quantity)
+        if product.quantity < quantity:
+            messages.error(request, "More than quantiy available")
+            return redirect(home)
+        product.quantity -= quantity
+        if product.quantity == 0:
+            product.is_active = False
+        product.save()
+        messages.success(request, "Purchase done")
+        return redirect(home)
+    
+    context = {"product": product}
+    return render(request, "app/single_product.html", context)

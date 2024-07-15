@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Checkout
+{% endblock %}
+
+
+{% block main %}
+
+<img src="{{ product.picture.url }}" alt="product">
+<h3>{{ product.title }}</h3>
+<p>$ {{ product.price }}</p>
+<p>{{ product.quantity }}pc(s) available</p>
+<p style="display: none;" id="price">{{ product.price }}</p>
+<p style="display: none;" id="quantity">{{ product.quantity }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="">Enter the quantity to buy</label>
+    <input type="number" value="1" name="quantity" id="input"><br>
+    <span id="price-span">Total Price: $ {{product.price}}</span><br>
+    <button>Confirm</button>
+</form>
+
+
+<script>
+let span = document.getElementById("price-span")
+let price = document.getElementById("price").innerText
+let quantity = parseInt(document.getElementById("quantity").innerText)
+let input = document.getElementById("input")
+input.addEventListener('change', () => {
+    let valueInputed = input.value
+    if (valueInputed > quantity){
+        valueInputed = quantity
+        input.value = quantity
+    }
+    span.innerText = `Total Price: \$ ${price * valueInputed}`
+})
+
+
+</script>
+
+
+{% endblock %}

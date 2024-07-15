@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %} New Product {% endblock title %}
+
+
+
+{% block main %}
+
+<form method="post">
+    {% csrf_token %}
+    <label for="">Title</label><br>
+    <input type="text" name="title"><br>
+    <label for="">Price</label><br>
+    <input type="number" name="price"><br>
+    <label for="">Quantity</label><br>
+    <input type="number" name="quantity"><br>
+    <label for="">Image</label><br>
+    <input type="file" name="image"><br>
+    <button>Create Product</button>
+</form>
+
+
+{% endblock %}

@@ -10,4 +10,25 @@ Home PAGE
 {% block main %}
 <h3>Welome to Our Market</h3>
 <p>We buy and sell!</p>
+
+<div style="display: flex;">
+    {% for product in products %}
+    <a style="width: 30%; text-decoration: none;" href="{% url 'single_product' product.id %}">
+    <div style="border: 1px solid black; border-radius: 15px;padding: 3%; margin: 5px;">
+        <img src="{{ product.picture.url }}" alt="{{ product.title }}"><br>
+        <h3>{{ product.title }}</h3>
+        <p>$ {{ product.price }}</p>
+        <p>{{ product.quantity }}pc(s) available</p>
+        <button>Buy</button>
+        {% if not product.is_active %}
+            <span style="color: red; font-size: .8rem;">Sold Out</span>
+        {% endif %}
+    </div>
+</a>
+    
+    {% empty %}
+    <h3>No Product at the moment</h3>
+    {% endfor %}
+
+</div>
 {% endblock main %}

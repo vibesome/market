@@ -11,4 +11,5 @@ Dashboard
 {% block main %}
 <h3>Welcome {{ user.username }}</h3>
 <p>This is your dashboard</p>
+<a href="{% url 'create_product' %}"><button>Create A new Product</button></a>
 {% endblock main %}
