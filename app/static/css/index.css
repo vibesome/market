@@ -1,0 +1,25 @@
+.modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    place-content: center;
+    background-color: grey;
+    height: 100vh;
+    width: 100vw;
+}
+
+.modal-inner{
+    width:30vw;
+    height: 30vh;
+    display: grid;
+    place-content: center;
+    background-color: white;
+    border-radius: 20px;
+    padding: 5%;
+    opacity: 1;
+    border: 1px solid black;
+}
+.modal-inner h3{
+    color: red;
+}

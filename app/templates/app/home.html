@@ -13,22 +13,70 @@ Home PAGE
 
 <div style="display: flex;">
     {% for product in products %}
-    <a style="width: 30%; text-decoration: none;" href="{% url 'single_product' product.id %}">
+
     <div style="border: 1px solid black; border-radius: 15px;padding: 3%; margin: 5px;">
         <img src="{{ product.picture.url }}" alt="{{ product.title }}"><br>
         <h3>{{ product.title }}</h3>
         <p>$ {{ product.price }}</p>
         <p>{{ product.quantity }}pc(s) available</p>
-        <button>Buy</button>
+        {% if product.owner != user %}
+        <a style="width: 30%; text-decoration: none;" href="{% url 'single_product' product.id %}">
+            <button>Buy</button>
+        </a>
+        {% endif %}
+        {% if product.owner == user %}
+        <a href="{% url 'edit_product' product.id %}">
+            <button>Edit</button>
+        </a>
+            <button onclick="showModal({{ product.id }})">Delete</button>
+        {% endif %}
         {% if not product.is_active %}
-            <span style="color: red; font-size: .8rem;">Sold Out</span>
+        <span style="color: red; font-size: .8rem;">Sold Out</span>
         {% endif %}
     </div>
-</a>
     
     {% empty %}
     <h3>No Product at the moment</h3>
     {% endfor %}
-
+    
+    <div class="modal" id="modal">
+        <div class="modal-inner">
+            <h3>Confirm Delete</h3>
+            <button onclick="deleteFunction()">Yes</button>
+            <button onclick="hideModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+<div class="contact">
+    <form action="POST">
+        {% csrf_token %}
+        <h2>CONTACT</h2>
+        <label for="">Name</label>
+        <input type="text" name="name"><br>
+        <label for="">Issue</label>
+        <input type="text" name="message"><br>
+        <label for="">email</label>
+        <input type="email" name="email">
+    </form>
 </div>
 {% endblock main %}
+
+{% block script %}
+<script>
+
+    let modal = document.getElementById('modal')
+    let productId = null
+
+    function showModal(id) {
+        modal.style.display = 'grid'
+        productId = id
+    }
+    function hideModal(){
+        modal.style.display= 'none'
+    }
+    function deleteFunction(){
+        window.location.href = `/delete_product/${productId}`
+    }
+</script>
+
+{% endblock %}

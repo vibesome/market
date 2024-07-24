@@ -3,13 +3,32 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.models import auth
 from app.models import Product
+from email.message import EmailMessage
+import smtplib
 
 # Create your views here.
 User = get_user_model()
 
 def home(request):
+    msg = EmailMessage()
+    email_Address = '........'
+    email_password = 'rvryltoqgvuvtrjh'
+    msg.set_content("Hello World")
+    msg["Subject"] = "Test mail"
+    msg['From'] = '...........'
+    msg['To'] = 'ayodejiadeyemo795@gmail.com'
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(email_Address, email_password)
+        smtp.send_message(msg)
+
     all_products = Product.objects.all().order_by("-created_at")
     context = {'products': all_products}
+    # if request.method == "POST":
+    #     name = request.POST.get("name")
+    #     message = request.POST.get("message")
+    #     email = request.POST.get("email")
+    #     body = 
+
     return render(request, "app/home.html", context)
 
 def signup(request):
@@ -79,8 +98,6 @@ def login(request):
     return render(request, "app/login.html")
 
 
-
-
 def dashboard(request):
     user = request.user
     if not user.is_authenticated:
@@ -118,6 +135,31 @@ def create_product(request):
         return redirect(dashboard)
     return render(request, "app/new_product.html")
 
+def edit_product(request, id):
+    user= request.user
+    if not user.is_authenticated:
+        return redirect(login)
+    product = Product.objects.filter(id=id).first()
+    if not product:
+        messages.error(request, "No product with such ID")
+        return redirect(home)
+    if product.owner != user:
+        return redirect(home)
+    if request.method == 'POST':
+        title = request.POST.get("title")
+        price = request.POST.get("price")
+        quantity = request.POST.get("quantity")
+        image = request.POST.get("image")
+
+        product.title = title
+        product.price = price
+        product.quantity = quantity
+        if image:
+            product.image = image
+        product.save()
+        messages.success(request, "Product successfuly modified")
+    return render(request, "app/edit_product.html", {"product": product})
+
 
 def single_product(request, id):
     user = request.user
@@ -145,3 +187,18 @@ def single_product(request, id):
     
     context = {"product": product}
     return render(request, "app/single_product.html", context)
+
+
+def deleteProduct(request, id):
+    user= request.user
+    if not user.is_authenticated:
+        return redirect(login)
+    product = Product.objects.filter(id=id).first()
+    if not product:
+        messages.error(request, "No product with such ID")
+        return redirect(home)
+    if product.owner != user:
+        return redirect(home)
+    product.delete()
+    messages.success(request, "Purchase deleted successfully")
+    return redirect(home)

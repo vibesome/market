@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %} New Product {% endblock title %}
+
+
+
+{% block main %}
+
+<form method="post">
+    {% csrf_token %}
+    <label for="">Title</label><br>
+    <input type="text" name="title" value="{{ product.title }}"><br>
+    <label for="">Price</label><br>
+    <input type="number" name="price" value="{{ product.price }}"><br>
+    <label for="">Quantity</label><br>
+    <input type="number" name="quantity" value="{{ product.quantity }}"><br>
+    <label for="">Image</label><br>
+    <div>
+        <img src="{{ product.image.url }}" alt="imgage">
+    </div>
+    <input type="file" name="image"><br>
+    <button>Update</button>
+</form>
+
+
+{% endblock %}
